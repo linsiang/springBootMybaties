@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>诗词管理</title>
+    <link href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <!--<link href="resources/static/bootstrap/css/bootstrap.css" rel="stylesheet">-->
+    <!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+
+    <!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.css">
+    <script src="https://unpkg.com/bootstrap-table@1.14.2/dist/bootstrap-table.min.js"></script>
+</head>
+<body>
+
+<div class="container" align="center">
+    <div id="toolbar" class="btn-group">
+        <button id="addUser" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>新增
+        </button>
+
+        <button id="remove" type="button" class="btn btn-default">
+            <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>删除
+        </button>
+    </div>
+</div>
+
+<table id="btTable" class="table table-bordered" ></table>
+
+
+<!-- 模态框（Modal） 添加User-->
+
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="ModalLabel">添加人员数据</h4>
+            </div>
+            <div class="modal-body">
+                <form id="addForm">
+                    <div class="form-group">
+                        <label class="control-lable"></label>
+                        <input name="poetryId1" id="poetryId1" class="form-control" type="hidden" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-lable">题目</label>
+                        <input name="poetryTitle1" id="poetryTitle1" class="form-control" type="text" placeholder="请输入标题。。。"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-lable">内容</label>
+
+                        <input name="poetryBody1" id="poetryBody1" class="form-control"  placeholder="请输入内容。。。"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">作者</label>
+                        <input name="poetryAuthor1" id="poetryAuthor1" class="form-control" type="text" placeholder="请输入作者。。。"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">用户名</label>
+                        <input name="poetryDynasty1" id="poetryDynasty1" class="form-control" type="text" placeholder="请输入朝代。。。"/>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="btnAddCommit" type="button" class="btn btn-primary">添加</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+
+<!-- 模态框（Modal） 修改U-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h4 class="modal-title" id="myModalLabel">修改诗词数据</h4>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <div class="form-group">
+                        <label class="control-lable"></label>
+                        <input name="poetryId" id="poetryId" class="form-control" type="hidden" />
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-lable">题目</label>
+                        <input name="poetryTitle" id="poetryTitle" class="form-control" type="text" placeholder="请输入标题。。。"/>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-lable">内容</label>
+                        <input name="poetryBody" id="poetryBody" class="form-control"  placeholder="请输入内容。。。"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">作者</label>
+                        <input name="poetryAuthor" id="poetryAuthor" class="form-control" type="text" placeholder="请输入作者。。。"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-lable">用户名</label>
+                        <input name="poetryDynasty" id="poetryDynasty" class="form-control" type="text" placeholder="请输入朝代。。。"/>
+                    </div>
+                </form>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button id="btnEditCommit" type="button" class="btn btn-primary">提交更改</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal-dialog -->
+</div>
+
+<script>
+
+
+    $("#addUser").click(function () {
+        var d = $("#addModal").modal({
+            backdrop: 'static',
+            keyboard: false
+        });
+        d.modal('show');
+    });
+
+    $("#btnAddCommit").click(function () {
+
+        var poetryTitle1 = $("#poetryTitle1").val();
+        var poetryBody1 = $("#poetryBody1").val();
+        var poetryAuthor1 = $("#poetryAuthor1").val();
+        var poetryDynasty1 = $("#poetryDynasty1").val();
+
+        $.ajax({
+            url: '/admin/addPoetry',
+            type: 'post',
+            data: {
+
+                poetryTitle:poetryTitle1,
+                poetryBody:poetryBody1,
+                poetryAuthor:poetryAuthor1,
+                poetryDynasty:poetryDynasty1
+            },
+            success: function (msg) {
+                if (msg !=null) {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert("添加失败！")
+
+                }
+            }
+        });
+
+
+    });
+
+
+    $(function () {
+        function addButton() {
+            return [
+                '<button class="btn-primary" id="btnEdit">编辑</button>&nbsp&nbsp&nbsp&nbsp&nbsp',
+                '<button class="btn-danger" id="btnDelete">删除</button>'
+            ].join("");
+        }
+
+        window.operateEvents = {
+
+            "click #btnEdit": function (e, v, r, i) {
+                $.get(
+                    //url,后面还带了个名字，看能不能有用
+                    '/admin/toEditPoetry',
+                    //+ r.uname,
+                    //data
+                    {poetryId: r.poetryId},
+                    //success
+                    function (data) {
+                            $('#editForm [name=poetryTitle]').val(data.poetryTitle),
+                            $('#editForm [name=poetryBody]').val(data.poetryBody),
+                            $('#editForm [name=poetryAuthor]').val(data.poetryAuthor),
+                            $('#editForm [name=poetryDynasty]').val(data.poetryDynasty),
+                            $('#editForm [name=poetryId]').val(data.poetryId)
+                    },
+                    'json'
+                );
+                var d = $("#editModal").modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                d.modal('show');
+
+            },
+            "click #btnDelete": function (e, v, r, i) {
+
+                $.post(
+                    '/admin/deletePoetry',
+                    {poetryId: r.poetryId},
+                    function (data) {
+                        if (data > 0) {
+                            // $(this).parents('tr').remove();
+                            $("#btTable").bootstrapTable('refresh');
+                        }
+                    }
+                );
+            }
+
+        };
+
+
+        $("#btTable").bootstrapTable({
+            method: 'POST',
+            url: '/admin/poetryList',
+            columns: [{
+                checkbox: true,
+            },
+                {
+                    align: 'center',
+                    valign: 'middle',
+                    field: 'poetryTitle',
+                    width: 200,
+                    title: '题目'
+
+                }, {
+                    align: 'center',
+                    valign: 'middle',
+                    field: 'poetryBody',
+                    width: 600,
+
+                    title: '内容'
+                }, {
+                    align: 'center',
+                    valign: 'middle',
+                    field: 'poetryAuthor',
+                    title: '作者'
+                },{
+                    align: 'center',
+                    valign: 'middle',
+                    field: 'poetryDynasty',
+                    title: '朝代'
+                },
+                {
+                    align: 'center',
+                    valign: 'middle',
+                    field: "button",
+                    title: "操作",
+                    formatter: addButton,
+                    events: operateEvents
+                }
+            ],
+            pagination: true,
+            pageNumber: 1,
+            pageSize: 10,
+            pageList: [15, 20],
+            search: true,
+            showToggle: true,                    //是否显示详细视图和列表视图的切换按钮
+            striped: true,                      //是否显示行间隔色
+            showExport: true,
+            exportDataType: "all",
+            toolbar: '#toolbar',
+            showExport: true,  //是否显示导出按钮
+            buttonsAlign: "right",  //按钮位置
+            exportTypes: ['csv', 'txt', 'sql', 'doc', 'excel', 'xlsx', 'pdf'],  //导出文件类型
+            Icons: 'glyphicon-export',
+            searchOnEnterKey: true,
+            paginationPreText: '上一页',
+            paginationNextText: '下一页',
+        });
+    });
+
+
+    $("#btnEditCommit").click(function () {
+        var poetryId = $("#poetryId").val();
+        var poetryTitle = $("#poetryTitle").val();
+        var poetryBody = $("#poetryBody").val();
+        var poetryAuthor = $("#poetryAuthor").val();
+        var poetryDynasty = $("#poetryDynasty").val();
+        $.ajax({
+            url: '/admin/editPoetry',
+            type: 'post',
+            data: {
+                poetryId: poetryId,
+                poetryTitle:poetryTitle,
+                poetryBody:poetryBody,
+                poetryAuthor:poetryAuthor,
+                poetryDynasty:poetryDynasty
+            },
+            success: function (msg) {
+                if (msg == "ojbk") {
+                    $('#editModal').modal('hide');
+                    location.reload();
+                } else {
+                    alert("修改失败！")
+                }
+            }
+        });
+    });
+
+    // 删除按钮事件
+    $("#remove").on("click", function () {
+        if (!confirm("是否确认删除？"))
+            return;
+        var rows = $("#btTable").bootstrapTable('getSelections');// 获得要删除的数据
+        if (rows.length == 0) {// rows 主要是为了判断是否选中，下面的else内容才是主要
+            alert("请先选择至少一个来删除！")
+            return;
+        } else {
+            var ids = '';
+            for (var i = 0; i < rows.length; i++) {
+                ids += rows[i]['poetryId'] + ",";
+            }
+            ids = ids.substring(0, ids.length - 1);
+            deleteMs(ids);
+        }
+    });
+
+    function deleteMs(ids) {
+        $.ajax({
+            url: '/admin/deletePoetrys',
+            data: {ids: ids},
+
+            type: "post",
+            // dataType: "json",
+            success: function (data) {
+                if (data == "ojbk") {
+                    alert("批量删除成功！");
+                    $('#btTable').bootstrapTable('refresh');
+                }else{
+                    alert("error");
+                }
+            }
+        })
+    }
+
+</script>
+
+</body>
+</html>
