@@ -17,12 +17,12 @@ public class IndexController {
     }
     @GetMapping("/")
     public String toIndex(HttpServletRequest request){
-        HttpSession session = request.getSession();
+/*        HttpSession session = request.getSession();
         User  user = new User();
         user.setPwd("123");
         user.setUname("fuck");
-        session.setAttribute("user",user);
-        return "index";
+        session.setAttribute("user",user);*/
+        return "login";
     }
 
 }

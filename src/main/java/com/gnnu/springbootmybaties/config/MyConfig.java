@@ -20,7 +20,7 @@ public class MyConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
          //配置拦截器
-          registry.addInterceptor(new SessionHandlerInterceptors()).addPathPatterns("/admin/**").excludePathPatterns("/login","/login.html","/","/css/**","/images/**","/js/**","/json/**","/layui/**","/page/**");
+          registry.addInterceptor(new SessionHandlerInterceptors()).addPathPatterns("/**","/").excludePathPatterns("/login","/login.html","/","/css/**","/images/**","/js/**","/json/**","/layui/**","/page/**");
     }
     class SessionHandlerInterceptors implements HandlerInterceptor{
 
