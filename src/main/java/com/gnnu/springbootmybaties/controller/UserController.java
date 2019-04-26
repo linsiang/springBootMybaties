@@ -3,6 +3,7 @@ package com.gnnu.springbootmybaties.controller;
 import com.gnnu.springbootmybaties.mapper.UserMapper;
 import com.gnnu.springbootmybaties.pojo.User;
 import com.gnnu.springbootmybaties.repo.MyReponsityJPA;
+import com.gnnu.springbootmybaties.service.UserService;
 import jdk.nashorn.internal.parser.JSONParser;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONException;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,7 +26,8 @@ public class UserController {
 
     @Autowired
     UserMapper userMapper;
-
+   @Autowired
+    UserService userService;
     @PostMapping("/users")
     public JSONObject users() {
         JSONObject jsonObject = new JSONObject();
@@ -79,4 +82,21 @@ public class UserController {
         msg = "ojbk";
         return msg;
     }
+
+    @PostMapping("/login")
+    public String login(String uname, String pwd, HttpServletRequest request) {
+        System.out.println(uname + "===" + pwd);
+        User user = new User();
+        user.setPwd(pwd);
+        user.setUname(uname);
+        int i = userService.login(user,request);
+        String msg="";
+        if(i==1){
+            msg="ojbk";
+        }else{
+            msg="error";
+        }
+        return msg;
+    }
+
 }
